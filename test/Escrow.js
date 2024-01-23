@@ -40,7 +40,9 @@ describe("Escrow", () => {
     transaction = await realEstate.connect(seller).approve(escrow.address, 1);
     await transaction.wait();
 
-    transaction = await escrow.connect(seller).list(1,buyer.address,tokens(10),tokens(5));
+    transaction = await escrow
+      .connect(seller)
+      .list(1, buyer.address, tokens(10), tokens(5));
     await transaction.wait();
   });
 
@@ -82,6 +84,17 @@ describe("Escrow", () => {
     });
     it("Returns escrow amount", async () => {
       const result = await escrow.escrowAmount(1);
+      expect(result).to.be.equal(tokens(5));
+    });
+  });
+
+  describe("Deposits", () => {
+    it("Updates contract balance", async () => {
+      const transaction = await escrow
+        .connect(buyer)
+        .depositEarnest(1, { value: tokens(5) });
+      await transaction.wait();
+      const result = await escrow.getBalance();
       expect(result).to.be.equal(tokens(5));
     });
   });

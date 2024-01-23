@@ -21,6 +21,11 @@ contract Escrow {
         _;
     }
 
+    modifier onlyBuyer(uint256 _nftID) {
+        require(msg.sender == buyer[_nftID], "only buyer can call this method");
+        _;
+    }
+
     constructor(
         address _nftAddress,
         address payable _seller,
@@ -38,7 +43,7 @@ contract Escrow {
         address _buyer,
         uint256 _purchasePrice,
         uint256 _escrowAmount
-    ) public payable onlySeller{
+    ) public payable onlySeller {
         // Transfer NFT from seller to this contract
         IERC721(nftAddress).transferFrom(msg.sender, address(this), _nftID);
         isListed[_nftID] = true;
@@ -46,5 +51,17 @@ contract Escrow {
         buyer[_nftID] = _buyer;
         purchasePrice[_nftID] = _purchasePrice;
         escrowAmount[_nftID] = _escrowAmount;
+    }
+
+    // put under contract - only buyer
+    function depositEarnest(uint256 _nftID) public payable onlyBuyer(_nftID) {
+        require(msg.value >= escrowAmount[_nftID]);
+    }
+
+    // to receive ether this is required
+    receive() external payable{}
+
+    function getBalance() public view returns (uint256) {
+        return address(this).balance;
     }
 }
