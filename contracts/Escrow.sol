@@ -16,6 +16,7 @@ contract Escrow {
     mapping(uint256 => uint256) public purchasePrice;
     mapping(uint256 => address) public buyer;
     mapping(uint256 => bool) public inspectionPassed;
+    mapping(uint256 => mapping(address => bool)) public approval;
 
     modifier onlySeller() {
         require(msg.sender == seller, "only seller can call this method");
@@ -27,7 +28,7 @@ contract Escrow {
         _;
     }
 
-    modifier onlyInspector(){
+    modifier onlyInspector() {
         require(msg.sender == inspector, "only inspector can call this method");
         _;
     }
@@ -70,6 +71,11 @@ contract Escrow {
         bool _passed
     ) public onlyInspector {
         inspectionPassed[_nftID] = _passed;
+    }
+
+    // providing approval by each members (buyer, seller, lender, etc.)
+    function updateApprovalStatus(uint256 _nftID) public {
+        approval[_nftID][msg.sender] = true;
     }
 
     // to receive ether this is required
