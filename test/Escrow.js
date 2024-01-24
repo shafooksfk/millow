@@ -112,9 +112,6 @@ describe("Escrow", () => {
 
   describe("Approval", () => {
     it("Updates Approval status", async () => {
-      let transaction = await escrow.connect(inspector).updateApprovalStatus(1);
-      await transaction.wait();
-
       transaction = await escrow.connect(buyer).updateApprovalStatus(1);
       await transaction.wait();
 
@@ -125,9 +122,46 @@ describe("Escrow", () => {
       await transaction.wait();
 
       expect(await escrow.approval(1, buyer.address)).to.be.equal(true);
-      expect(await escrow.approval(1, inspector.address)).to.be.equal(true);
       expect(await escrow.approval(1, seller.address)).to.be.equal(true);
       expect(await escrow.approval(1, lender.address)).to.be.equal(true);
     });
+  });
+
+  describe("Sale", () => {
+    beforeEach(async () => {
+      // adding money as earnest  from buyer
+      let transaction = await escrow
+        .connect(buyer)
+        .depositEarnest(1, { value: tokens(5) });
+      await transaction.wait();
+
+      // approval from inspector
+      transaction = await escrow
+        .connect(inspector)
+        .updateInspectionStatus(1, true);
+      await transaction.wait();
+
+      // approval from buyer
+      transaction = await escrow.connect(buyer).updateApprovalStatus(1);
+      await transaction.wait();
+
+      // approval from seller
+      transaction = await escrow.connect(seller).updateApprovalStatus(1);
+      await transaction.wait();
+
+      // approval from lender
+      transaction = await escrow.connect(lender).updateApprovalStatus(1);
+      await transaction.wait();
+
+      await lender.sendTransaction({
+        to: escrow.address,
+        value: tokens(5),
+      });
+
+      transaction = await escrow.connect(seller).finalizeSale(1);
+      await transaction.wait();
+    });
+
+    it("works", () => {});
   });
 });
