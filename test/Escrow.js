@@ -23,7 +23,7 @@ describe("Escrow", () => {
     let transaction = await realEstate
       .connect(seller)
       .mint(
-        "https://ipfs.io/ipfs/QmQVcpsjrA6cr1iJjZAodYwmPekYgbnXGo4DFubJiLcZEB/1.json"
+        "https://ipfs.io/ipfs/QmQVcpsjrA6cr1iJjZAodYwmPekYgbnXGo4DFubJiLc2EB/1.json"
       );
     await transaction.wait();
     // https://ipfs.io/ipfs/QmTudSYeM7mz3PkYEWXWqPjomRPHogcMFSq7XAvsvsgAPS
@@ -169,7 +169,7 @@ describe("Escrow", () => {
     it("Updates balance", async () => {
       expect(await escrow.getBalance()).to.be.equal(0);
     });
-    
+
     it.skip("Failed transaction", async () => {
       let transaction = await escrow.connect(inspector).updateInspectionStatus(1,false);
       await transaction.wait();
