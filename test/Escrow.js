@@ -169,5 +169,12 @@ describe("Escrow", () => {
     it("Updates balance", async () => {
       expect(await escrow.getBalance()).to.be.equal(0);
     });
+    
+    it.skip("Failed transaction", async () => {
+      let transaction = await escrow.connect(inspector).updateInspectionStatus(1,false);
+      await transaction.wait();
+      expect(await escrow.getBalance()).to.be.equal(10);
+
+    });
   });
 });

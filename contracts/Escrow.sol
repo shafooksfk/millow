@@ -78,13 +78,6 @@ contract Escrow {
         approval[_nftID][msg.sender] = true;
     }
 
-    // to receive ether this is required
-    receive() external payable {}
-
-    function getBalance() public view returns (uint256) {
-        return address(this).balance;
-    }
-
     // Finalize sale
     // -> Require inspection status (add more items here, like appraisal)
     // -> Require sale to be authorized
@@ -107,5 +100,21 @@ contract Escrow {
 
         // removing the property from listing
         isListed[_nftID] = false;
+    }
+
+    // transfer earnest deposit if inspection failed 
+    function cancelSale(uint256 _nftID) public payable {
+        if (inspectionPassed[_nftID] == false) {
+            payable(buyer[_nftID]).transfer(address(this).balance);
+        } else {
+            payable(seller).transfer(address(this).balance);
+        }
+    }
+
+    // to receive ether this is required
+    receive() external payable {}
+
+    function getBalance() public view returns (uint256) {
+        return address(this).balance;
     }
 }
