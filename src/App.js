@@ -17,7 +17,9 @@ function App() {
   const [account, setAccount] = useState(null);
   const [provider, setProvider] = useState(null);
   const [escrow, setEscrow] = useState(null);
-  const [homes, setHomes] = useState(null);
+  const [homes, setHomes] = useState([]);
+  const [home, setHome] = useState({});
+  const [toggle, setToggle] = useState(false);
 
   const loadBlockChainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -65,6 +67,11 @@ function App() {
     });
   };
 
+  function togglePop(home) {
+    setHome(home);
+    setToggle(!toggle);
+  }
+
   useEffect(() => {
     loadBlockChainData();
   }, []);
@@ -77,22 +84,25 @@ function App() {
         <h3>Homes for you</h3>
         <hr />
         <div className="cards">
-          {homes && homes.map((home, i) => (
-            <div className="card" key={i}>
-              <div className="card__image">
-                <img src={home.image} alt="Home" />
+          {homes &&
+            homes.map((home, i) => (
+              <div className="card" key={i} onClick={()=>togglePop(home)}>
+                <div className="card__image">
+                  <img src={home.image} alt="Home" />
+                </div>
+                <div className="card__info">
+                  <h4>{home.attributes[0].value} ETH</h4>
+                  <p>
+                    <strong>{home.attributes[2].value}</strong>bds |
+                    <strong>{home.attributes[3].value}</strong>ba |
+                    <strong>{home.attributes[4].value}</strong>sqft |
+                  </p>
+                  <p>{home.address}</p>
+                </div>
               </div>
-              <div className="card__info">
-                <h4>{home.attributes[0].value} ETH</h4>
-                <p>
-                  <strong>{home.attributes[2].value}</strong>bds |<strong>{home.attributes[3].value}</strong>ba |
-                  <strong>{home.attributes[4].value}</strong>sqft |
-                </p>
-                <p>{home.address}</p>
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
+        {toggle && <Home home={home} escrow={escrow} provider={provider} togglePop={togglePop}/>}
       </div>
     </div>
   );

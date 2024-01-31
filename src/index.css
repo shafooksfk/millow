@@ -230,9 +230,8 @@ header {
   /* grid-template-columns: repeat(2, 1fr); */
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
   align-items: center;
-
   width: 80%;
-  height: 70%;
+  height: 90%;
   margin: 0 auto;
   padding: 20px;
 
@@ -274,10 +273,8 @@ header {
 }
 
 .home__overview {
-  height: 100%;
   margin: 0 20px;
   padding-right: 40px;
-
   overflow-y: scroll;
 }
 
